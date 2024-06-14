@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ListService } from './list.service';
 import { List } from './schemas/list.schema';
+import { CreateListDto } from './dto/create-list.dto';
+import { UpdateListDto } from './dto/update-list.dto';
 
 @Controller('list')
 export class ListController {
@@ -25,7 +27,7 @@ export class ListController {
     @Post('new')
     async createList(
         @Body()
-        list: List
+        list: CreateListDto
     ): Promise<List> {
         return this.listService.create(list);
     }
@@ -35,7 +37,7 @@ export class ListController {
         @Param('id')
         id: string,
         @Body()
-        list: List
+        list: UpdateListDto
     ): Promise<List> {
         return this.listService.updateById(id, list);
     }
