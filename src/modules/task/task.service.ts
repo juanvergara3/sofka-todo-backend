@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Task } from './schemas/task.schema';
 import mongoose from 'mongoose';
@@ -16,6 +16,12 @@ export class TaskService {
     }
 
     async getById(id: string): Promise<Task> {
+
+        const isValid = mongoose.isValidObjectId(id);
+
+        if (!isValid)
+            throw new BadRequestException('Plese provide a valid id');
+
         const task = await this.taskModel.findById(id);
 
         if (!task)

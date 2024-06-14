@@ -17,7 +17,7 @@ export class Task {
     completed: boolean;
 
     @Prop()
-    dueDate: string;
+    dueDate: Date;
 
     @Prop()
     listId: string;
