@@ -7,7 +7,7 @@ import { SchemaFactory } from "@nestjs/mongoose";
 })
 export class List {
 
-    @Prop()
+    @Prop({ unique: [true, 'List already exists'] })
     title: string;
 
     @Prop()

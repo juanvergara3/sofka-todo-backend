@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
@@ -21,11 +21,20 @@ export class AuthService {
 
         const hashedPassword = await hash(password, 10);
 
-        const user = await this.userModel.create({
+        const user = new this.userModel({
             name,
             email,
             password: hashedPassword
         });
+
+        try {
+            await user.save();
+        } catch (error) {
+            if (error.code === 11000 && error.keyPattern.email) {
+                throw new ConflictException('Email is already in use');
+            }
+            throw error;
+        }
 
         const token = this.jwtService.sign({ id: user._id });
 

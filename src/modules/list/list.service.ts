@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { List } from './schemas/list.schema';
 import mongoose from 'mongoose';
@@ -17,7 +17,6 @@ export class ListService {
     }
 
     async getById(id: string): Promise<List> {
-
         const isValid = mongoose.isValidObjectId(id);
 
         if (!isValid)
@@ -32,7 +31,17 @@ export class ListService {
     }
 
     async create(list: List): Promise<List> {
-        const res = await this.listModel.create(list);
+        const res = new this.listModel(list);
+
+        try {
+            await res.save();
+        } catch (error) {
+            if (error.code === 11000 && error.keyPattern.title) {
+                throw new ConflictException('List already exists');
+            }
+            throw error;
+        }
+
         return res;
     }
 
