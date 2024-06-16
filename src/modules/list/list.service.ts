@@ -30,17 +30,16 @@ export class ListService {
     }
 
     async create(list: List, userId: string): Promise<List> {
-
-        const data = Object.assign(list, { user: userId })
+        const data = Object.assign(list, { user: userId });
 
         const res = new this.listModel(data);
 
         try {
             await res.save();
         } catch (error) {
-            if (error.code === 11000 && error.keyPattern.title) {
+            if (error.code === 11000 && error.keyPattern.title)
                 throw new ConflictException('List already exists');
-            }
+
             throw error;
         }
 
@@ -48,7 +47,6 @@ export class ListService {
     }
 
     async updateById(id: string, userId: string, list: List): Promise<List> {
-
         const isValid = mongoose.isValidObjectId(id);
 
         if (!isValid)
@@ -67,7 +65,6 @@ export class ListService {
     }
 
     async deleteById(id: string, userId: string): Promise<List> {
-
         const isValid = mongoose.isValidObjectId(id);
 
         if (!isValid)
@@ -83,5 +80,4 @@ export class ListService {
 
         return deletedList;
     }
-
 }
