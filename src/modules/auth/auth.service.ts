@@ -58,4 +58,10 @@ export class AuthService {
 
         return { token };
     }
+
+    async getName(id: string): Promise<{ name: string }> {
+        const user = await this.userModel.findById(id);
+
+        return { name: user.name };
+    }
 }
