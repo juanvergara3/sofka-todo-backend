@@ -1,5 +1,7 @@
-import { IsBoolean, IsNotEmpty, IsString, IsDate } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString, IsDate, IsEmpty, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
+import { List } from "src/modules/list/schemas/list.schema";
+import { User } from "src/modules/auth/schemas/user.schema";
 
 export class CreateTaskDto {
 
@@ -8,20 +10,23 @@ export class CreateTaskDto {
     readonly title: string;
 
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     readonly description: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsBoolean()
     readonly completed: boolean;
 
-    @IsNotEmpty()
-    @Type(() => Date)
+    @IsOptional()
     @IsDate()
+    @Type(() => Date)
     readonly dueDate: Date;
 
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Task is required to be associated with a list' })
     @IsString()
-    readonly listId: string;
+    readonly list: List;
+
+    @IsEmpty({ message: 'User is not allowed to be set manually' })
+    readonly user: User;
 }

@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './schemas/task.schema';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('task')
 export class TaskController {
@@ -10,43 +11,55 @@ export class TaskController {
     constructor(private taskService: TaskService) { }
 
     @Get()
-    async getAllTasks(): Promise<Task[]> {
-        const tasks = this.taskService.getAll();
+    @UseGuards(AuthGuard())
+    async getAllTasks(
+        @Query('listId') listId: string,
+        @Req() req
+    ): Promise<Task[]> {
+        const tasks = this.taskService.getAll(req.user._id, listId);
         return tasks;
     }
 
     @Get(':id')
+    @UseGuards(AuthGuard())
     async getTaskById(
         @Param('id')
-        id: string
+        id: string,
+        @Req() req
     ): Promise<Task> {
-        const tasks = this.taskService.getById(id);
+        const tasks = this.taskService.getById(id, req.user._id);
         return tasks;
     }
 
     @Post('new')
+    @UseGuards(AuthGuard())
     async createTask(
         @Body()
-        task: CreateTaskDto
+        task: CreateTaskDto,
+        @Req() req
     ): Promise<Task> {
-        return this.taskService.create(task);
+        return this.taskService.create(task, req.user._id);
     }
 
     @Put('update/:id')
+    @UseGuards(AuthGuard())
     async updateTask(
         @Param('id')
         id: string,
         @Body()
-        task: UpdateTaskDto
+        task: UpdateTaskDto,
+        @Req() req
     ): Promise<Task> {
-        return this.taskService.updateById(id, task);
+        return this.taskService.updateById(id, req.user._id, task);
     }
 
     @Delete('delete/:id')
+    @UseGuards(AuthGuard())
     async deleteTask(
         @Param('id')
         id: string,
+        @Req() req
     ): Promise<Task> {
-        return this.taskService.deleteById(id);
+        return this.taskService.deleteById(id, req.user._id);
     }
 }
