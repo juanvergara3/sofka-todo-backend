@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString, IsDate, IsEmpty, IsOptional } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString, IsDate, IsEmpty, IsOptional, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import { List } from "src/modules/list/schemas/list.schema";
 import { User } from "src/modules/auth/schemas/user.schema";
@@ -7,11 +7,13 @@ export class CreateTaskDto {
 
     @IsNotEmpty()
     @IsString()
+    @MaxLength(60)
     readonly title: string;
 
 
     @IsOptional()
     @IsString()
+    @MaxLength(300)
     readonly description: string;
 
     @IsOptional()

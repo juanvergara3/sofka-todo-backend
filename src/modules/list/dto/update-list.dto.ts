@@ -1,10 +1,11 @@
-import { IsEmpty, IsOptional, IsString } from "class-validator";
+import { IsEmpty, IsOptional, IsString, MaxLength } from "class-validator";
 import { User } from "src/modules/auth/schemas/user.schema";
 
 export class UpdateListDto {
 
     @IsOptional()
     @IsString()
+    @MaxLength(45)
     readonly title: string;
 
     @IsOptional()
