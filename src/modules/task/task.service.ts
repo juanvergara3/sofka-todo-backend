@@ -71,4 +71,21 @@ export class TaskService {
 
         return deletedTask;
     }
+
+    async deleteByListId(listId: string, userId: string): Promise<{ deletedCount?: number }> {
+        const isValid = mongoose.isValidObjectId(listId);
+
+        if (!isValid)
+            throw new BadRequestException('Plese provide a valid list id');
+
+        const deletedTasks = await this.taskModel.deleteMany(
+            { list: listId, 'user': userId },
+            { new: true, runValidators: true }
+        ).exec();
+
+        if (!deletedTasks)
+            throw new NotFoundException('List not found or you are not allowed to delete these tasks');
+
+        return deletedTasks;
+    }
 }

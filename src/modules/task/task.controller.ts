@@ -62,4 +62,14 @@ export class TaskController {
     ): Promise<Task> {
         return this.taskService.deleteById(id, req.user._id);
     }
+
+    @Delete('deleteByList/:id')
+    @UseGuards(AuthGuard())
+    async deleteTasksById(
+        @Param('id')
+        listId: string,
+        @Req() req
+    ): Promise<{ deletedCount?: number }> {
+        return this.taskService.deleteByListId(listId, req.user._id);
+    }
 }
